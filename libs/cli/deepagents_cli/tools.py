@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Literal
 
 if TYPE_CHECKING:
+    from langchain_core.tools import BaseTool
     from tavily import TavilyClient
 
 _UNSET = object()
@@ -178,6 +179,27 @@ def web_search(  # noqa: ANN201  # Return type depends on dynamic tool configura
         UsageLimitExceededError,
     ) as e:
         return {"error": f"Web search error: {e!s}", "query": query}
+
+
+def get_dashscope_image_tool() -> BaseTool | None:
+    """Create and return the DashScope `generate_image` tool if the API key is set.
+
+    The tool is instantiated lazily so that importing this module never triggers
+    a heavy import of the `deepagents` SDK.  The tool is only returned when
+    `DASHSCOPE_API_KEY` is present in the environment; otherwise `None` is
+    returned and the tool is silently omitted from the agent's tool list.
+
+    Returns:
+        A configured `generate_image` `BaseTool`, or `None` if the key is absent.
+    """
+    from deepagents_cli.config import settings
+
+    if not settings.has_dashscope:
+        return None
+
+    from deepagents_cli.dashscope_image import generate_image_tool
+
+    return generate_image_tool()
 
 
 def fetch_url(url: str, timeout: int = 30) -> dict[str, Any]:

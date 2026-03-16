@@ -549,7 +549,12 @@ async def run_textual_cli_async(
     from deepagents_cli.config import console, create_model, settings
     from deepagents_cli.model_config import ModelConfigError
     from deepagents_cli.sessions import get_checkpointer
-    from deepagents_cli.tools import fetch_url, http_request, web_search
+    from deepagents_cli.tools import (
+        fetch_url,
+        get_dashscope_image_tool,
+        http_request,
+        web_search,
+    )
 
     try:
         result = create_model(
@@ -585,6 +590,9 @@ async def run_textual_cli_async(
         ]
         if settings.has_tavily:
             tools.append(web_search)
+        dashscope_tool = get_dashscope_image_tool()
+        if dashscope_tool is not None:
+            tools.append(dashscope_tool)
 
         # Load MCP tools (explicit config, auto-discovery, or disabled)
         mcp_session_manager = None
@@ -724,7 +732,12 @@ async def _run_acp_cli_async(
     from deepagents_cli.agent import create_cli_agent
     from deepagents_cli.config import create_model, settings
     from deepagents_cli.model_config import ModelConfigError
-    from deepagents_cli.tools import fetch_url, http_request, web_search
+    from deepagents_cli.tools import (
+        fetch_url,
+        get_dashscope_image_tool,
+        http_request,
+        web_search,
+    )
 
     try:
         model_result = create_model(
@@ -741,6 +754,9 @@ async def _run_acp_cli_async(
     tools: list[Any] = [http_request, fetch_url]
     if settings.has_tavily:
         tools.append(web_search)
+    dashscope_tool = get_dashscope_image_tool()
+    if dashscope_tool is not None:
+        tools.append(dashscope_tool)
 
     mcp_session_manager = None
     mcp_server_info = None

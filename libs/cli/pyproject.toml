@@ -48,6 +48,7 @@ dependencies = [
 
     # Tools
     "tavily-python>=0.7.21,<1.0.0",
+    "httpx>=0.27.0,<1.0.0",
 
     # Clipboard
     "pyperclip>=1.11.0,<2.0.0",
