@@ -1,10 +1,11 @@
 /* Deep Agents CLI Textual Stylesheet */
 
+$primary: #3b6dac;
+
 /* Define layers for z-ordering */
 Screen {
     layout: vertical;
     layers: base autocomplete;
-    $primary: #3b6dac;
 }
 
 /* Main content goes on base layer by default */
