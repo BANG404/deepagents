@@ -54,7 +54,7 @@ DOCS_URL = "https://docs.langchain.com/oss/python/deepagents/cli"
 
 COLORS = {
     "primary": "#3b6dac",
-    "primary_dev": "#f97316",
+    "primary_dev": "#3b6dac",
     "dim": "#6b7280",
     "user": "#ffffff",
     "agent": "#10b981",
