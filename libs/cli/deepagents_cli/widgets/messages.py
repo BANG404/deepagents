@@ -933,7 +933,7 @@ class ToolCallMessage(Vertical):
         Returns:
             FormattedOutput with file content and optional truncation info.
         """
-        lines = output.split("\n")\n")
+        lines = output.split("\n")
         max_lines = 4 if is_preview else len(lines)
 
         parts = [Content(line) for line in lines[:max_lines]]
@@ -979,7 +979,7 @@ class ToolCallMessage(Vertical):
             pass
 
         # Fallback: line-based output (grep results)
-        lines = output.split("\n")\n")
+        lines = output.split("\n")
         max_lines = 5 if is_preview else len(lines)
 
         parts = [
@@ -1003,7 +1003,7 @@ class ToolCallMessage(Vertical):
         Returns:
             FormattedOutput with shell output and optional truncation info.
         """
-        lines = output.split("\n")\n")
+        lines = output.split("\n")
         max_lines = 4 if is_preview else len(lines)
 
         parts: list[Content] = []
@@ -1142,7 +1142,7 @@ class ToolCallMessage(Vertical):
         Returns:
             FormattedOutput with task output and optional truncation info.
         """
-        lines = output.split("\n")\n")
+        lines = output.split("\n")
         max_lines = 4 if is_preview else len(lines)
 
         parts = [Content(line) for line in lines[:max_lines]]
