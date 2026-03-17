@@ -71,6 +71,9 @@ jobs:
             deepagents-cli)
               echo "working-dir=libs/cli" >> $GITHUB_OUTPUT
               ;;
+            docagents)
+              echo "working-dir=libs/cli" >> $GITHUB_OUTPUT
+              ;;
             deepagents-acp)
               echo "working-dir=libs/acp" >> $GITHUB_OUTPUT
               ;;
@@ -88,7 +91,7 @@ jobs:
               ;;
             *)
               echo "Error: Unknown package '$PACKAGE'"
-              echo "Valid packages are: deepagents, deepagents-cli, deepagents-acp, deepagents-harbor, langchain-daytona, langchain-modal, langchain-runloop"
+              echo "Valid packages are: deepagents, deepagents-cli, docagents, deepagents-acp, deepagents-harbor, langchain-daytona, langchain-modal, langchain-runloop"
               exit 1
               ;;
           esac
