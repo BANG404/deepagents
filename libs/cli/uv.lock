@@ -926,6 +926,114 @@ wheels = [
 [[package]]
 name = "deepagents-cli"
 version = "0.0.31"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiosqlite" },
+    { name = "daytona" },
+    { name = "deepagents" },
+    { name = "deepagents-acp" },
+    { name = "langchain" },
+    { name = "langchain-mcp-adapters" },
+    { name = "langchain-openai" },
+    { name = "langgraph-checkpoint-sqlite" },
+    { name = "langsmith", extra = ["sandbox"] },
+    { name = "markdownify" },
+    { name = "modal" },
+    { name = "pillow" },
+    { name = "prompt-toolkit" },
+    { name = "pyperclip" },
+    { name = "python-dotenv" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "rich" },
+    { name = "runloop-api-client" },
+    { name = "tavily-python" },
+    { name = "textual" },
+    { name = "textual-autocomplete" },
+    { name = "tomli-w" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/af/6e/bc8affe86e52bb2c06098ea0f3e3f7c213e02151b23e4278069b95dad632/deepagents_cli-0.0.31.tar.gz", hash = "sha256:6832e83b7becee0cd4c540b95ec0ba58dd891cb224cec7f0c35ab6ce85b071c6", size = 880265 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/15/09/c5f5e6712d296fa749781f4140dcf6da03b10992b360c9e484e75de947ae/deepagents_cli-0.0.31-py3-none-any.whl", hash = "sha256:30a32c05955eb99e810112c51295db694c3a061bed89648a234e6d729e37cc42", size = 302878 },
+]
+
+[package.optional-dependencies]
+anthropic = [
+    { name = "langchain-anthropic" },
+]
+bedrock = [
+    { name = "langchain-aws" },
+]
+cohere = [
+    { name = "langchain-cohere" },
+]
+deepseek = [
+    { name = "langchain-deepseek" },
+]
+fireworks = [
+    { name = "langchain-fireworks" },
+]
+google-genai = [
+    { name = "langchain-google-genai" },
+]
+groq = [
+    { name = "langchain-groq" },
+]
+huggingface = [
+    { name = "langchain-huggingface" },
+]
+ibm = [
+    { name = "langchain-ibm" },
+]
+mistralai = [
+    { name = "langchain-mistralai" },
+]
+nvidia = [
+    { name = "langchain-nvidia-ai-endpoints" },
+]
+ollama = [
+    { name = "langchain-ollama" },
+]
+openai = [
+    { name = "langchain-openai" },
+]
+openrouter = [
+    { name = "langchain-openrouter" },
+]
+perplexity = [
+    { name = "langchain-perplexity" },
+]
+vertexai = [
+    { name = "langchain-google-vertexai" },
+]
+xai = [
+    { name = "langchain-xai" },
+]
+
+[[package]]
+name = "deprecated"
+version = "1.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "wrapt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/49/85/12f0a49a7c4ffb70572b6c2ef13c90c88fd190debda93b23f026b25f9634/deprecated-1.3.1.tar.gz", hash = "sha256:b1b50e0ff0c1fddaa5708a2c6b0a6588bb09b892825ab2b214ac9ea9d92a5223", size = 2932523 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/d0/205d54408c08b13550c733c4b85429e7ead111c7f0014309637425520a9a/deprecated-1.3.1-py2.py3-none-any.whl", hash = "sha256:597bfef186b6f60181535a29fbe44865ce137a5079f295b479886c82729d5f3f", size = 11298 },
+]
+
+[[package]]
+name = "distro"
+version = "1.9.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/f8/98eea607f65de6527f8a2e8885fc8015d3e6f5775df186e443e0964a11c3/distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed", size = 60722 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/12/b3/231ffd4ab1fc9d679809f356cebee130ac7daa00d6d6f3206dd4fd137e9e/distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2", size = 20277 },
+]
+
+[[package]]
+name = "docagents"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiosqlite" },
@@ -956,23 +1064,7 @@ dependencies = [
 
 [package.optional-dependencies]
 all-providers = [
-    { name = "langchain-anthropic" },
-    { name = "langchain-aws" },
-    { name = "langchain-cohere" },
-    { name = "langchain-deepseek" },
-    { name = "langchain-fireworks" },
-    { name = "langchain-google-genai" },
-    { name = "langchain-google-vertexai" },
-    { name = "langchain-groq" },
-    { name = "langchain-huggingface" },
-    { name = "langchain-ibm" },
-    { name = "langchain-mistralai" },
-    { name = "langchain-nvidia-ai-endpoints" },
-    { name = "langchain-ollama" },
-    { name = "langchain-openai" },
-    { name = "langchain-openrouter" },
-    { name = "langchain-perplexity" },
-    { name = "langchain-xai" },
+    { name = "deepagents-cli", extra = ["anthropic", "bedrock", "cohere", "deepseek", "fireworks", "google-genai", "groq", "huggingface", "ibm", "mistralai", "nvidia", "ollama", "openai", "openrouter", "perplexity", "vertexai", "xai"] },
 ]
 anthropic = [
     { name = "langchain-anthropic" },
@@ -1104,27 +1196,6 @@ test = [
     { name = "ruff", specifier = ">=0.14.0,<1.0.0" },
     { name = "twine", specifier = ">=6.0.0,<7.0.0" },
     { name = "ty", specifier = ">=0.0.1,<1.0.0" },
-]
-
-[[package]]
-name = "deprecated"
-version = "1.3.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "wrapt" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/49/85/12f0a49a7c4ffb70572b6c2ef13c90c88fd190debda93b23f026b25f9634/deprecated-1.3.1.tar.gz", hash = "sha256:b1b50e0ff0c1fddaa5708a2c6b0a6588bb09b892825ab2b214ac9ea9d92a5223", size = 2932523 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/d0/205d54408c08b13550c733c4b85429e7ead111c7f0014309637425520a9a/deprecated-1.3.1-py2.py3-none-any.whl", hash = "sha256:597bfef186b6f60181535a29fbe44865ce137a5079f295b479886c82729d5f3f", size = 11298 },
-]
-
-[[package]]
-name = "distro"
-version = "1.9.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fc/f8/98eea607f65de6527f8a2e8885fc8015d3e6f5775df186e443e0964a11c3/distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed", size = 60722 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/12/b3/231ffd4ab1fc9d679809f356cebee130ac7daa00d6d6f3206dd4fd137e9e/distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2", size = 20277 },
 ]
 
 [[package]]
