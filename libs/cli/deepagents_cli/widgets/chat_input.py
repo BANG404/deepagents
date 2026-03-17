@@ -457,6 +457,9 @@ class ChatTextArea(TextArea):
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key events."""
+        if event.key not in {"up", "down"}:
+            self._navigating_history = False
+
         # VS Code 1.110 incorrectly sends space as a CSI u escape code
         # (`\x1b[32u`) instead of a plain ` ` character.  Textual parses
         # this as Key(key='space', character=None, is_printable=False), so
@@ -681,7 +684,6 @@ class ChatTextArea(TextArea):
         last_row = len(lines) - 1
         last_col = len(lines[last_row])
         self.move_cursor((last_row, last_col))
-        self._navigating_history = False
 
     def clear_text(self) -> None:
         """Clear the text area."""
@@ -897,11 +899,12 @@ class ChatInput(Vertical):
         self._sync_media_tracker_to_text(text)
 
         # History handlers explicitly decide mode and stripped display text.
-        # Skip mode detection here so recalled entries don't inherit stale mode.
+        # Skip completion generation.
         if self._text_area and self._text_area._navigating_history:
             if self._completion_manager:
                 self._completion_manager.reset()
             self.scroll_visible()
+            self._text_area._navigating_history = False
             return
 
         if self._applying_inline_path_replacement:
