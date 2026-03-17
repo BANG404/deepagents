@@ -40,7 +40,7 @@ def test_cli_version_flag() -> None:
     )
     # argparse exits with 0 for --version
     assert result.returncode == 0
-    assert f"deepagents-cli {__version__}" in result.stdout
+    assert f"docagents {__version__}" in result.stdout
     from importlib.metadata import version as pkg_version
 
     sdk_version = pkg_version("deepagents")
@@ -62,7 +62,7 @@ async def test_version_slash_command_message_format() -> None:
 
         app_msgs = app.query(AppMessage)
         content = str(app_msgs[-1]._content)
-        assert f"deepagents-cli version: {__version__}" in content
+        assert f"docagents version: {__version__}" in content
         assert f"deepagents (SDK) version: {sdk_version}" in content
 
 
@@ -87,7 +87,7 @@ async def test_version_slash_command_sdk_unavailable() -> None:
 
         app_msgs = app.query(AppMessage)
         content = str(app_msgs[-1]._content)
-        assert f"deepagents-cli version: {__version__}" in content
+        assert f"docagents version: {__version__}" in content
         assert "deepagents (SDK) version: unknown" in content
 
 
@@ -106,7 +106,7 @@ async def test_version_slash_command_cli_version_unavailable() -> None:
 
         app_msgs = app.query(AppMessage)
         content = str(app_msgs[-1]._content)
-        assert "deepagents-cli version: unknown" in content
+        assert "docagents version: unknown" in content
 
 
 def test_help_mentions_version_flag() -> None:
