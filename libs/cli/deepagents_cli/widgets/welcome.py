@@ -1,4 +1,4 @@
-"""Welcome banner widget for deepagents-cli."""
+"""Welcome banner widget for docagents."""
 
 from __future__ import annotations
 
@@ -123,7 +123,7 @@ class WelcomeBanner(Static):
                     f"'{self._project_name}'",
                     style=Style(
                         color="cyan",
-                        link=f"{project_url}?utm_source=deepagents-cli",
+                        link=f"{project_url}?utm_source=docagents",
                     ),
                 )
             else:
@@ -134,7 +134,7 @@ class WelcomeBanner(Static):
             if project_url:
                 thread_url = (
                     f"{project_url.rstrip('/')}/t/{self._cli_thread_id}"
-                    "?utm_source=deepagents-cli"
+                    "?utm_source=docagents"
                 )
                 thread_line = Text.assemble(
                     ("Thread: ", "dim"),

@@ -1,4 +1,4 @@
-"""Background update check for deepagents-cli.
+"""Background update check for docagents.
 
 Compares the installed version against PyPI and caches the result
 (see `CACHE_TTL`). All errors are silently swallowed to avoid disrupting
@@ -20,10 +20,10 @@ from deepagents_cli.model_config import DEFAULT_CONFIG_DIR
 
 logger = logging.getLogger(__name__)
 
-PYPI_URL = "https://pypi.org/pypi/deepagents-cli/json"
+PYPI_URL = "https://pypi.org/pypi/docagents/json"
 CACHE_FILE: Path = DEFAULT_CONFIG_DIR / "latest_version.json"
 CACHE_TTL = 86_400  # 24 hours
-USER_AGENT = f"deepagents-cli/{__version__} update-check"
+USER_AGENT = f"docagents/{__version__} update-check"
 
 
 def _parse_version(v: str) -> tuple[int, ...]:
@@ -40,7 +40,7 @@ def _parse_version(v: str) -> tuple[int, ...]:
 
 
 def get_latest_version() -> str | None:
-    """Fetch the latest deepagents-cli version from PyPI, with caching.
+    """Fetch the latest docagents version from PyPI, with caching.
 
     Results are cached to `CACHE_FILE` to avoid repeated network calls.
 
@@ -82,7 +82,7 @@ def get_latest_version() -> str | None:
 
 
 def is_update_available() -> tuple[bool, str | None]:
-    """Check whether a newer version of deepagents-cli is available.
+    """Check whether a newer version of docagents is available.
 
     Returns:
         A `(available, latest)` tuple. `available` is `True` when

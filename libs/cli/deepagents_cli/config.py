@@ -50,10 +50,10 @@ if TYPE_CHECKING:
     from langchain_core.runnables import RunnableConfig
 
 DOCS_URL = "https://docs.langchain.com/oss/python/deepagents/cli"
-"""URL for deepagents-cli documentation."""
+"""URL for docagents documentation."""
 
 COLORS = {
-    "primary": "#10b981",
+    "primary": "#3b6dac",
     "primary_dev": "#f97316",
     "dim": "#6b7280",
     "user": "#ffffff",
@@ -209,7 +209,7 @@ Kept short so tracing metadata can never stall CLI flows.
 
 
 def _is_editable_install() -> bool:
-    """Check if deepagents-cli is installed in editable mode.
+    """Check if docagents is installed in editable mode.
 
     Uses PEP 610 direct_url.json metadata to detect editable installs.
 
@@ -221,7 +221,7 @@ def _is_editable_install() -> bool:
         return _editable_cache
 
     try:
-        dist = distribution("deepagents-cli")
+        dist = distribution("docagents")
         direct_url = dist.read_text("direct_url.json")
         if direct_url:
             data = json.loads(direct_url)
@@ -439,7 +439,7 @@ def parse_shell_allow_list(allow_list_str: str | None) -> list[str] | None:
 
 @dataclass
 class Settings:
-    """Global settings and environment detection for deepagents-cli.
+    """Global settings and environment detection for docagents.
 
     This class is initialized once at startup and provides access to:
     - Available models and API keys
@@ -1250,7 +1250,7 @@ def build_langsmith_thread_url(thread_id: str) -> str | None:
     if not project_url:
         return None
 
-    return f"{project_url.rstrip('/')}/t/{thread_id}?utm_source=deepagents-cli"
+    return f"{project_url.rstrip('/')}/t/{thread_id}?utm_source=docagents"
 
 
 def reset_langsmith_url_cache() -> None:

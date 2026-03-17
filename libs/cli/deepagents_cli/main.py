@@ -481,7 +481,7 @@ def parse_args() -> argparse.Namespace:
         "-v",
         "--version",
         action="version",
-        version=f"deepagents-cli {__version__}\ndeepagents (SDK) {sdk_version}",
+        version=f"docagents {__version__}\ndeepagents (SDK) {sdk_version}",
     )
     parser.add_argument(
         "-h",
@@ -1055,7 +1055,7 @@ def cli_main() -> None:
         except Exception:  # Best-effort SDK version lookup
             logger.debug("Unexpected error looking up SDK version", exc_info=True)
             sdk_version = "unknown"
-        print(f"deepagents-cli {__version__}\ndeepagents (SDK) {sdk_version}")  # noqa: T201  # CLI version output
+        print(f"docagents {__version__}\ndeepagents (SDK) {sdk_version}")  # noqa: T201  # CLI version output
         sys.exit(0)
 
     # ACP mode does not require Textual, so skip UI dependency checks when

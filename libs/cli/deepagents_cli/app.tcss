@@ -4,6 +4,7 @@
 Screen {
     layout: vertical;
     layers: base autocomplete;
+    $primary: #3b6dac;
 }
 
 /* Main content goes on base layer by default */
