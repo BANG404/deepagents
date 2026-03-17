@@ -24,6 +24,7 @@ on:
         options:
           - deepagents
           - deepagents-cli
+          - docagents
           - deepagents-acp
           - deepagents-harbor
           - langchain-daytona
@@ -504,7 +505,7 @@ jobs:
           path: ${{ env.WORKING_DIR }}/dist/
 
       - name: Verify CLI pins latest SDK version
-        if: needs.build.outputs.pkg-name == 'deepagents-cli' && !inputs.dangerous-skip-sdk-pin-check
+        if: (needs.build.outputs.pkg-name == 'deepagents-cli' || needs.build.outputs.pkg-name == 'docagents') && !inputs.dangerous-skip-sdk-pin-check
         run: |
           SDK_VERSION=$(grep -Po '(?<=^version = ")[^"]*' libs/deepagents/pyproject.toml)
           CLI_SDK_PIN=$(grep -Po '(?<=deepagents==)[0-9]+\.[0-9]+\.[0-9]+' libs/cli/pyproject.toml)
