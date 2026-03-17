@@ -143,7 +143,7 @@ def show_list_help() -> None:
     """
     console.print()
     console.print("[bold]Usage:[/bold]", style=COLORS["primary"])
-    console.print("  docagents list")
+    console.print("  docagents list [options]")
     console.print()
     console.print(
         "List all agents found in ~/.docagents/. Each agent has its own",
@@ -323,7 +323,7 @@ def show_threads_delete_help() -> None:
     """Show help information for the `threads delete` subcommand."""
     console.print()
     console.print("[bold]Usage:[/bold]", style=COLORS["primary"])
-    console.print("  docagents threads delete <ID>")
+    console.print("  docagents threads delete <ID> [options]")
     console.print()
     console.print("[bold]Options:[/bold]", style=COLORS["primary"])
     console.print("  -h, --help        Show this help message")

@@ -42,7 +42,6 @@ def test_cli_version_flag() -> None:
     assert result.returncode == 0
     assert f"docagents {__version__}" in result.stdout
     from importlib.metadata import version as pkg_version
-
     sdk_version = pkg_version("deepagents")
     assert f"deepagents (SDK) {sdk_version}" in result.stdout
 
