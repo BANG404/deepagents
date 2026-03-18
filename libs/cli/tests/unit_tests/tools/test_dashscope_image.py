@@ -359,8 +359,15 @@ class TestSaveImage:
 
 
 class TestResolveSavePath:
-    def test_none_returns_none(self) -> None:
-        assert _resolve_save_path(None, "/workspace") is None
+    def test_none_generates_timestamped_filename_in_default_dir(self) -> None:
+        result = _resolve_save_path(None, "/workspace")
+        assert result.startswith("/workspace/image_")
+        assert result.endswith(".png")
+
+    def test_none_generates_timestamped_filename_without_default_dir(self) -> None:
+        result = _resolve_save_path(None, None)
+        assert result.startswith("image_")
+        assert result.endswith(".png")
 
     def test_absolute_path_unchanged(self) -> None:
         result = _resolve_save_path("/abs/path/img.png", "/workspace")
@@ -394,9 +401,10 @@ class TestGenerateImageToolSync:
         )
 
     def test_returns_tool_message_with_image_block(
-        self, monkeypatch: pytest.MonkeyPatch
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
+        monkeypatch.chdir(tmp_path)
         tool = self._make_tool()
         runtime = _make_runtime("call-sync-1")
         with self._patch_sync(
@@ -412,7 +420,9 @@ class TestGenerateImageToolSync:
         assert isinstance(result.content, list)
         assert result.content[0]["type"] == "image"
         assert result.content[0]["base64"] == FAKE_BASE64
-        assert result.additional_kwargs["saved_path"] is None
+        saved = result.additional_kwargs["saved_path"]
+        assert saved is not None
+        assert saved.endswith(".png")
         assert result.additional_kwargs["model"] == "qwen-image-2.0-pro"
         assert result.additional_kwargs["revised_prompt"] == FAKE_REVISED_PROMPT
 
@@ -553,9 +563,10 @@ class TestGenerateImageToolAsync:
         )
 
     async def test_async_returns_tool_message_with_image_block(
-        self, monkeypatch: pytest.MonkeyPatch
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
         monkeypatch.setenv("DASHSCOPE_API_KEY", "test-key")
+        monkeypatch.chdir(tmp_path)
         tool = self._make_tool()
         runtime = _make_runtime("call-async-1")
         with self._patch_async(
@@ -574,6 +585,9 @@ class TestGenerateImageToolAsync:
         assert result.content[0]["type"] == "image"
         assert result.content[0]["base64"] == FAKE_BASE64
         assert result.additional_kwargs["model"] == "qwen-image-2.0-pro"
+        saved = result.additional_kwargs["saved_path"]
+        assert saved is not None
+        assert saved.endswith(".png")
 
     async def test_async_saves_to_disk(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path

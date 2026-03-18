@@ -63,6 +63,7 @@ class TestServerGraph:
             http_request=http_tool,
             fetch_url=fetch_tool,
             web_search=object(),
+            get_dashscope_image_tool=MagicMock(return_value=None),
         )
 
         resolve_mcp_tools = AsyncMock(return_value=([mcp_tool], None, mcp_server_info))

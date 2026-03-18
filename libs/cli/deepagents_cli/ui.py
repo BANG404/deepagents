@@ -112,6 +112,9 @@ def show_help() -> None:
     console.print("  --default-model [MODEL]    Set, show, or manage the default model")
     console.print("  --clear-default-model      Clear the default model")
     console.print("  --acp                      Run as an ACP server over stdio")
+    console.print(
+        "  --json                     Emit machine-readable JSON for this command"
+    )
     console.print("  -v, --version              Show docagents CLI and SDK versions")
     console.print("  -h, --help                 Show this help message and exit")
     console.print()

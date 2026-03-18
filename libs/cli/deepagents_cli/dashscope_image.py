@@ -10,6 +10,7 @@ The API key is read from the `DASHSCOPE_API_KEY` environment variable.
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import logging
 import os
@@ -344,7 +345,7 @@ async def _acall_generate_image(
 
     saved: str | None = None
     if save_path:
-        saved = _save_image(encoded, save_path)
+        saved = await asyncio.to_thread(_save_image, encoded, save_path)
 
     return GenerateImageResult(
         base64=encoded,
@@ -479,7 +480,7 @@ def generate_image_tool(
             str | None,
             "Filesystem path where the generated image should be saved "
             "(e.g. '/workspace/output.png'). Directories are created automatically. "
-            "If omitted, the image is only returned as base64.",
+            "If omitted, the image is saved to the current directory.",
         ] = None,
         size: Annotated[
             ImageSize,
@@ -543,7 +544,7 @@ def generate_image_tool(
             str | None,
             "Filesystem path where the generated image should be saved "
             "(e.g. '/workspace/output.png'). Directories are created automatically. "
-            "If omitted, the image is only returned as base64.",
+            "If omitted, the image is saved to the current directory.",
         ] = None,
         size: Annotated[
             ImageSize,
@@ -608,24 +609,25 @@ def generate_image_tool(
     )
 
 
-def _resolve_save_path(
-    save_path: str | None, default_save_dir: str | None
-) -> str | None:
+def _resolve_save_path(save_path: str | None, default_save_dir: str | None) -> str:
     """Resolve a caller-supplied save path against an optional default directory.
 
-    When `save_path` is an absolute path or `None`, it is returned unchanged.
+    When `save_path` is an absolute path, it is returned unchanged.
     When `save_path` is relative and `default_save_dir` is set, the path is
-    joined under `default_save_dir`.
+    joined under `default_save_dir`. If `save_path` is `None`, a default
+    filename is generated in the current directory.
 
     Args:
         save_path: Raw path supplied by the caller.
         default_save_dir: Optional base directory for relative paths.
 
     Returns:
-        Resolved path string, or `None` if `save_path` is `None`.
+        Resolved path string.
     """
+    import time
+
     if save_path is None:
-        return None
+        save_path = f"image_{int(time.time())}.png"
     p = Path(save_path)
     if p.is_absolute() or default_save_dir is None:
         return str(p)

@@ -13,7 +13,20 @@ from typing import TYPE_CHECKING, Any
 
 from textual.containers import Vertical
 from textual.content import Content
-from textual.widgets import Markdown, Static
+from textual.selection import Selection
+from textual.widgets import Label, Markdown, Static
+
+
+class SelectableStatic(Static):
+    """Static widget that handles Textual selection bugs with wrapped text."""
+
+    def get_selection(self, selection: Selection) -> tuple[str, ...] | None:
+        try:
+            res = super().get_selection(selection)
+            return tuple(res) if res is not None else None
+        except IndexError:
+            return None
+
 
 from deepagents_cli.config import (
     COLORS,
@@ -487,7 +500,7 @@ class ToolCallMessage(Vertical):
             Widgets for header, arguments, status, and output display.
         """
         tool_label = format_tool_display(self._tool_name, self._args)
-        yield Static(
+        yield SelectableStatic(
             Content.from_markup(
                 "[bold #f59e0b]$label[/bold #f59e0b]", label=tool_label
             ),
@@ -497,31 +510,35 @@ class ToolCallMessage(Vertical):
         if self._tool_name not in _TOOLS_WITH_HEADER_INFO:
             args = self._filtered_args()
             if args:
-                args_str = ", ".join(
-                    f"{k}={v!r}" for k, v in list(args.items())[:_MAX_INLINE_ARGS]
-                )
+                formatted_args = []
+                for k, v in list(args.items())[:_MAX_INLINE_ARGS]:
+                    v_str = repr(v)
+                    if len(v_str) > 100:
+                        v_str = v_str[:97] + "..."
+                    formatted_args.append(f"{k}={v_str}")
+                args_str = ", ".join(formatted_args)
                 if len(args) > _MAX_INLINE_ARGS:
                     args_str += ", ..."
-                yield Static(
+                yield SelectableStatic(
                     Content.from_markup("[dim]($args)[/dim]", args=args_str),
                     classes="tool-args",
                 )
         # Status - shows running animation while pending, then final status
-        yield Static("", classes="tool-status", id="status")
+        yield SelectableStatic("", classes="tool-status", id="status")
         # Output area - hidden initially, shown when output is set
-        yield Static("", classes="tool-output-preview", id="output-preview")
-        yield Static("", classes="tool-output", id="output-full")
-        yield Static("", classes="tool-output-hint", id="output-hint")
+        yield SelectableStatic("", classes="tool-output-preview", id="output-preview")
+        yield SelectableStatic("", classes="tool-output", id="output-full")
+        yield SelectableStatic("", classes="tool-output-hint", id="output-hint")
 
     def on_mount(self) -> None:
         """Cache widget references and hide all status/output areas initially."""
         if _detect_charset_mode() == CharsetMode.ASCII:
             self.styles.border_left = ("ascii", "#3b3b3b")
 
-        self._status_widget = self.query_one("#status", Static)
-        self._preview_widget = self.query_one("#output-preview", Static)
-        self._hint_widget = self.query_one("#output-hint", Static)
-        self._full_widget = self.query_one("#output-full", Static)
+        self._status_widget = self.query_one("#status", SelectableStatic)
+        self._preview_widget = self.query_one("#output-preview", SelectableStatic)
+        self._hint_widget = self.query_one("#output-hint", SelectableStatic)
+        self._full_widget = self.query_one("#output-full", SelectableStatic)
         # Hide everything initially - status only shown when running or on error/reject
         self._status_widget.display = False
         self._preview_widget.display = False
@@ -758,7 +775,9 @@ class ToolCallMessage(Vertical):
                 # Truncate to max chars
                 truncated = output[: self._PREVIEW_CHARS]
                 truncation = f"{len(output) - self._PREVIEW_CHARS} more chars"
-                return FormattedOutput(content=Content(truncated), truncation=truncation)
+                return FormattedOutput(
+                    content=Content(truncated), truncation=truncation
+                )
 
         # Default: plain text (Content treats input as literal)
         return FormattedOutput(content=Content(output))

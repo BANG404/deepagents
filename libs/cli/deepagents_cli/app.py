@@ -707,6 +707,11 @@ class DeepAgentsApp(App):
 
     async def on_mount(self) -> None:
         """Initialize components after mount."""
+        from deepagents_cli.config import _is_editable_install
+
+        if _is_editable_install():
+            self.theme = "textual-light"
+
         chat = self.query_one("#chat", VerticalScroll)
         chat.anchor()
         if _detect_charset_mode() == CharsetMode.ASCII:
