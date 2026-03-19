@@ -2959,18 +2959,15 @@ class DeepAgentsApp(App):
 
         mounted_messages = []
 
-        def _intercept_print(*args: Any, **_kwargs: Any) -> None:
-            text = " ".join(str(a) for a in args)
+        def _on_copilot_auth_message(text: str) -> None:
             if not text.strip() or text.startswith("==="):
                 return
             msg_widget = AppMessage(text)
             mounted_messages.append(msg_widget)
             self.call_from_thread(self._mount_message, msg_widget)
 
-        original_print = getattr(copilot_auth, "print", None)
         try:
-            copilot_auth.print = _intercept_print
-            token = copilot_auth.get_copilot_token()
+            token = copilot_auth.get_copilot_token(callback=_on_copilot_auth_message)
             if token:
                 os.environ["GITHUB_TOKEN"] = token
 
@@ -3005,11 +3002,6 @@ class DeepAgentsApp(App):
         except Exception as e:  # noqa: BLE001
             msg = f"Login failed: {e}"
             self.call_from_thread(self._mount_message, ErrorMessage(msg))
-        finally:
-            if original_print:
-                copilot_auth.print = original_print
-            else:
-                del copilot_auth.print
 
     def _fetch_and_save_copilot_models(self, chat_cls: type, token: str) -> None:
         """Fetch available Copilot models from the API and persist them to config.
