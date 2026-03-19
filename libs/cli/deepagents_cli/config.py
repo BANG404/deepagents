@@ -176,11 +176,6 @@ class Glyphs:
     # Diff-specific
     gutter_bar: str  # ▌ vs |
 
-    # Tree connectors (full prefixes for tree display)
-    tree_branch: str  # "├── " vs "+-- "
-    tree_last: str  # "└── " vs "`-- "
-    tree_vertical: str  # "│   " vs "|   "
-
     # Status bar
     git_branch: str  # "↗" vs "git:"
 
@@ -207,9 +202,6 @@ UNICODE_GLYPHS = Glyphs(
     box_horizontal="─",
     box_double_horizontal="═",
     gutter_bar="▌",
-    tree_branch="├── ",
-    tree_last="└── ",
-    tree_vertical="│   ",
     git_branch="↗",
 )
 
@@ -235,9 +227,6 @@ ASCII_GLYPHS = Glyphs(
     box_horizontal="-",
     box_double_horizontal="=",
     gutter_bar="|",
-    tree_branch="+-- ",
-    tree_last="`-- ",
-    tree_vertical="|   ",
     git_branch="git:",
 )
 
@@ -360,6 +349,18 @@ def reset_glyphs_cache() -> None:
     _glyphs_cache = None
 
 
+def is_ascii_mode() -> bool:
+    """Check whether the terminal is in ASCII charset mode.
+
+    Convenience wrapper so widgets can branch on charset without importing
+    both `_detect_charset_mode` and `CharsetMode`.
+
+    Returns:
+        `True` when the detected charset mode is ASCII.
+    """
+    return _detect_charset_mode() == CharsetMode.ASCII
+
+
 def newline_shortcut() -> str:
     """Return the platform-native label for the newline keyboard shortcut.
 
@@ -375,12 +376,12 @@ def newline_shortcut() -> str:
 # Text art banners (Unicode and ASCII variants)
 
 _UNICODE_BANNER = f"""
-██████╗   ██████╗   ██████╗ 
-██╔══██╗ ██╔═══██╗ ██╔════╝ 
-██║  ██║ ██║   ██║ ██║     
-██║  ██║ ██║   ██║ ██║     
-██████╔╝ ╚██████╔╝ ╚██████╗ 
-╚═════╝   ╚═════╝   ╚═════╝ 
+██████╗   ██████╗   ██████╗
+██╔══██╗ ██╔═══██╗ ██╔════╝
+██║  ██║ ██║   ██║ ██║
+██║  ██║ ██║   ██║ ██║
+██████╔╝ ╚██████╔╝ ╚██████╗
+╚═════╝   ╚═════╝   ╚═════╝
 
  █████╗   ██████╗  ███████╗ ███╗   ██╗ ████████╗ ███████╗
 ██╔══██╗ ██╔════╝  ██╔════╝ ████╗  ██║ ╚══██╔══╝ ██╔════╝
@@ -534,6 +535,8 @@ class Settings:
         google_api_key: Google API key if available.
         nvidia_api_key: NVIDIA API key if available.
         tavily_api_key: Tavily API key if available.
+        dashscope_api_key: DashScope API key if available.
+        github_token: GitHub Token if available.
         google_cloud_project: Google Cloud project ID for VertexAI
             authentication.
         deepagents_langchain_project: LangSmith project name for deepagents
@@ -554,6 +557,7 @@ class Settings:
     nvidia_api_key: str | None
     tavily_api_key: str | None
     dashscope_api_key: str | None
+    github_token: str | None
 
     # Google Cloud configuration (for VertexAI)
     google_cloud_project: str | None
@@ -590,6 +594,7 @@ class Settings:
         nvidia_key = os.environ.get("NVIDIA_API_KEY") or None
         tavily_key = os.environ.get("TAVILY_API_KEY") or None
         dashscope_key = os.environ.get("DASHSCOPE_API_KEY") or None
+        github_token = os.environ.get("GITHUB_TOKEN") or None
         google_cloud_project = os.environ.get("GOOGLE_CLOUD_PROJECT")
 
         # Detect LangSmith configuration
@@ -616,6 +621,7 @@ class Settings:
             nvidia_api_key=nvidia_key,
             tavily_api_key=tavily_key,
             dashscope_api_key=dashscope_key,
+            github_token=github_token,
             google_cloud_project=google_cloud_project,
             deepagents_langchain_project=deepagents_langchain_project,
             user_langchain_project=user_langchain_project,
@@ -650,6 +656,7 @@ class Settings:
             "nvidia_api_key",
             "tavily_api_key",
             "dashscope_api_key",
+            "github_token",
         }
         reloadable_fields = (
             "openai_api_key",
@@ -658,6 +665,7 @@ class Settings:
             "nvidia_api_key",
             "tavily_api_key",
             "dashscope_api_key",
+            "github_token",
             "google_cloud_project",
             "deepagents_langchain_project",
             "project_root",
@@ -692,6 +700,7 @@ class Settings:
             "nvidia_api_key": os.environ.get("NVIDIA_API_KEY") or None,
             "tavily_api_key": os.environ.get("TAVILY_API_KEY") or None,
             "dashscope_api_key": os.environ.get("DASHSCOPE_API_KEY") or None,
+            "github_token": os.environ.get("GITHUB_TOKEN") or None,
             "google_cloud_project": os.environ.get("GOOGLE_CLOUD_PROJECT"),
             "deepagents_langchain_project": os.environ.get(
                 "DEEPAGENTS_LANGSMITH_PROJECT"
@@ -1596,6 +1605,8 @@ def _create_model_via_init(
             return init_chat_model(model_name, model_provider=provider, **kwargs)
         return init_chat_model(model_name, **kwargs)
     except ImportError as e:
+        import importlib.util
+
         package_map = {
             "anthropic": "langchain-anthropic",
             "openai": "langchain-openai",
@@ -1604,9 +1615,24 @@ def _create_model_via_init(
             "nvidia": "langchain-nvidia-ai-endpoints",
         }
         package = package_map.get(provider, f"langchain-{provider}")
-        msg = (
-            f"Missing package for provider '{provider}'. Install: pip install {package}"
-        )
+        # Convert pip package name to Python module name for import check.
+        module_name = package.replace("-", "_")
+        try:
+            spec_found = importlib.util.find_spec(module_name) is not None
+        except (ImportError, ValueError):
+            spec_found = False
+        if spec_found:
+            # Package is installed but an internal import failed — surface
+            # the real error instead of the misleading "missing package" hint.
+            msg = (
+                f"Provider package '{package}' is installed but failed to "
+                f"import for provider '{provider}': {e}"
+            )
+        else:
+            msg = (
+                f"Missing package for provider '{provider}'. "
+                f"Install: pip install {package}"
+            )
         raise ModelConfigError(msg) from e
     except (ValueError, TypeError) as e:
         spec = f"{provider}:{model_name}" if provider else model_name

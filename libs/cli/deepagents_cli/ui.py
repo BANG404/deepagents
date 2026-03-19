@@ -88,6 +88,10 @@ def show_help() -> None:
     console.print("  --ask-user                 Enable ask_user interactive questions")
     console.print("  --sandbox TYPE             Remote sandbox for execution")
     console.print(
+        "                           LangSmith is included; Modal/Daytona/Runloop"
+        " require downloading extras"
+    )
+    console.print(
         "  --sandbox-id ID            Reuse existing sandbox (skips creation/cleanup)"
     )
     console.print(

@@ -32,9 +32,8 @@ from deepagents_cli.config import (
     COLORS,
     MODE_DISPLAY_GLYPHS,
     PREFIX_TO_MODE,
-    CharsetMode,
-    _detect_charset_mode,
     get_glyphs,
+    is_ascii_mode,
 )
 from deepagents_cli.input import EMAIL_PREFIX_PATTERN, INPUT_HIGHLIGHT_PATTERN
 from deepagents_cli.tool_display import format_tool_display
@@ -179,7 +178,7 @@ class UserMessage(_TimestampClickMixin, Static):
         """Set border style based on charset mode and content prefix."""
         mode = PREFIX_TO_MODE.get(self._content[:1]) if self._content else None
         color = _mode_color(mode)
-        border_type = "ascii" if _detect_charset_mode() == CharsetMode.ASCII else "wide"
+        border_type = "ascii" if is_ascii_mode() else "wide"
         self.styles.border_left = (border_type, color)
 
     def compose(self) -> ComposeResult:
@@ -263,7 +262,7 @@ class QueuedUserMessage(Static):
 
     def on_mount(self) -> None:
         """Set border style based on charset mode."""
-        if _detect_charset_mode() == CharsetMode.ASCII:
+        if is_ascii_mode():
             self.styles.border_left = ("ascii", "#6b7280")
 
     def compose(self) -> ComposeResult:
@@ -532,7 +531,7 @@ class ToolCallMessage(Vertical):
 
     def on_mount(self) -> None:
         """Cache widget references and hide all status/output areas initially."""
-        if _detect_charset_mode() == CharsetMode.ASCII:
+        if is_ascii_mode():
             self.styles.border_left = ("ascii", "#3b3b3b")
 
         self._status_widget = self.query_one("#status", SelectableStatic)
@@ -772,7 +771,6 @@ class ToolCallMessage(Vertical):
             if len(lines) > self._PREVIEW_LINES:
                 return self._format_lines_output(lines, is_preview=True)
             if len(output) > self._PREVIEW_CHARS:
-                # Truncate to max chars
                 truncated = output[: self._PREVIEW_CHARS]
                 truncation = f"{len(output) - self._PREVIEW_CHARS} more chars"
                 return FormattedOutput(
@@ -1329,7 +1327,7 @@ class DiffMessage(_TimestampClickMixin, Static):
 
     def on_mount(self) -> None:
         """Set border style based on charset mode."""
-        if _detect_charset_mode() == CharsetMode.ASCII:
+        if is_ascii_mode():
             self.styles.border = ("ascii", "cyan")
 
 
@@ -1363,7 +1361,7 @@ class ErrorMessage(_TimestampClickMixin, Static):
 
     def on_mount(self) -> None:
         """Set border style based on charset mode."""
-        if _detect_charset_mode() == CharsetMode.ASCII:
+        if is_ascii_mode():
             self.styles.border_left = ("ascii", "red")
 
 

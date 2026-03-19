@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from deepagents_cli.command_registry import SLASH_COMMANDS
 from deepagents_cli.config import Settings
-from deepagents_cli.widgets.autocomplete import SLASH_COMMANDS
 
 _RELOAD_ENV_KEYS = (
     "OPENAI_API_KEY",
@@ -14,6 +14,7 @@ _RELOAD_ENV_KEYS = (
     "GOOGLE_API_KEY",
     "NVIDIA_API_KEY",
     "TAVILY_API_KEY",
+    "GITHUB_TOKEN",
     "GOOGLE_CLOUD_PROJECT",
     "DEEPAGENTS_LANGSMITH_PROJECT",
     "DEEPAGENTS_SHELL_ALLOW_LIST",

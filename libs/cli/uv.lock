@@ -757,14 +757,15 @@ toml = [
 
 [[package]]
 name = "croniter"
-version = "6.2.2"
+version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "python-dateutil" },
+    { name = "pytz" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/df/de/5832661ed55107b8a09af3f0a2e71e0957226a59eb1dcf0a445cce6daf20/croniter-6.2.2.tar.gz", hash = "sha256:ba60832a5ec8e12e51b8691c3309a113d1cf6526bdf1a48150ce8ec7a532d0ab", size = 113762 }
+sdist = { url = "https://files.pythonhosted.org/packages/ad/2f/44d1ae153a0e27be56be43465e5cb39b9650c781e001e7864389deb25090/croniter-6.0.0.tar.gz", hash = "sha256:37c504b313956114a983ece2c2b07790b1f1094fe9d81cc94739214748255577", size = 64481 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/39/783980e78cb92c2d7bdb1fc7dbc86e94ccc6d58224d76a7f1f51b6c51e30/croniter-6.2.2-py3-none-any.whl", hash = "sha256:a5d17b1060974d36251ea4faf388233eca8acf0d09cbd92d35f4c4ac8f279960", size = 45422 },
+    { url = "https://files.pythonhosted.org/packages/07/4b/290b4c3efd6417a8b0c284896de19b1d5855e6dbdb97d2a35e68fa42de85/croniter-6.0.0-py2.py3-none-any.whl", hash = "sha256:2f878c3856f17896979b2a4379ba1f09c83e374931ea15cc835c5dd2eee9b368", size = 25468 },
 ]
 
 [[package]]
@@ -974,6 +975,8 @@ test = [
     { name = "langchain-openai" },
     { name = "pytest" },
     { name = "pytest-asyncio", specifier = ">=1.3.0" },
+    { name = "pytest-benchmark" },
+    { name = "pytest-codspeed" },
     { name = "pytest-cov" },
     { name = "pytest-socket" },
     { name = "pytest-timeout", specifier = ">=2.3.1,<3.0.0" },
@@ -999,6 +1002,25 @@ wheels = [
 ]
 
 [[package]]
+name = "deepagents-cli"
+version = "0.0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langchain" },
+    { name = "langchain-anthropic" },
+    { name = "langchain-core" },
+    { name = "python-dotenv" },
+    { name = "requests" },
+    { name = "rich" },
+    { name = "tavily-python" },
+    { name = "wcmatch" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/77/b3/85136f03dfe041fab07d614796adc929b34fba3c436b31a7b79096e0fdcb/deepagents_cli-0.0.3.tar.gz", hash = "sha256:10fce8923d36ea1a0101f9f8573fafbdc32030fc81b77cb70bb9b821ed1dc5e6", size = 54085 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/95/1b/b93bb5cb4a53e69dfdf75353143aa1415d0e278757ddbf6b5c2ff5b93a35/deepagents_cli-0.0.3-py3-none-any.whl", hash = "sha256:26462a1f2e8c9ccb2083fae95701299fe7d5aabaf56735d0804875038633e82c", size = 54747 },
+]
+
+[[package]]
 name = "deprecated"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1021,11 +1043,10 @@ wheels = [
 
 [[package]]
 name = "docagents"
-version = "0.1.5"
+version = "0.1.6"
 source = { editable = "." }
 dependencies = [
     { name = "aiosqlite" },
-    { name = "daytona" },
     { name = "deepagents" },
     { name = "deepagents-acp" },
     { name = "httpx" },
@@ -1040,7 +1061,6 @@ dependencies = [
     { name = "langgraph-sdk" },
     { name = "langsmith", extra = ["sandbox"] },
     { name = "markdownify" },
-    { name = "modal" },
     { name = "pillow" },
     { name = "prompt-toolkit" },
     { name = "pyperclip" },
@@ -1048,7 +1068,6 @@ dependencies = [
     { name = "pyyaml" },
     { name = "requests" },
     { name = "rich" },
-    { name = "runloop-api-client" },
     { name = "tavily-python" },
     { name = "textual" },
     { name = "textual-autocomplete" },
@@ -1065,6 +1084,7 @@ all-providers = [
     { name = "langchain-cohere" },
     { name = "langchain-deepseek" },
     { name = "langchain-fireworks" },
+    { name = "langchain-githubcopilot-chat" },
     { name = "langchain-google-genai" },
     { name = "langchain-google-vertexai" },
     { name = "langchain-groq" },
@@ -1079,6 +1099,9 @@ all-providers = [
     { name = "langchain-perplexity" },
     { name = "langchain-xai" },
 ]
+all-sandboxes = [
+    { name = "deepagents-cli" },
+]
 anthropic = [
     { name = "langchain-anthropic" },
 ]
@@ -1091,11 +1114,17 @@ bedrock = [
 cohere = [
     { name = "langchain-cohere" },
 ]
+daytona = [
+    { name = "langchain-daytona" },
+]
 deepseek = [
     { name = "langchain-deepseek" },
 ]
 fireworks = [
     { name = "langchain-fireworks" },
+]
+githubcopilot = [
+    { name = "langchain-githubcopilot-chat" },
 ]
 google-genai = [
     { name = "langchain-google-genai" },
@@ -1115,6 +1144,9 @@ litellm = [
 mistralai = [
     { name = "langchain-mistralai" },
 ]
+modal = [
+    { name = "langchain-modal" },
+]
 nvidia = [
     { name = "langchain-nvidia-ai-endpoints" },
 ]
@@ -1129,6 +1161,9 @@ openrouter = [
 ]
 perplexity = [
     { name = "langchain-perplexity" },
+]
+runloop = [
+    { name = "langchain-runloop" },
 ]
 vertexai = [
     { name = "langchain-google-vertexai" },
@@ -1157,10 +1192,10 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "aiosqlite", specifier = ">=0.19.0,<1.0.0" },
-    { name = "daytona", specifier = ">=0.113.0,<1.0.0" },
     { name = "deepagents", editable = "../deepagents" },
     { name = "deepagents-acp", specifier = ">=0.0.4" },
-    { name = "docagents", extras = ["anthropic", "baseten", "bedrock", "cohere", "deepseek", "fireworks", "google-genai", "groq", "huggingface", "ibm", "litellm", "mistralai", "nvidia", "ollama", "openai", "openrouter", "perplexity", "vertexai", "xai"], marker = "extra == 'all-providers'" },
+    { name = "deepagents-cli", extras = ["daytona", "modal", "runloop"], marker = "extra == 'all-sandboxes'" },
+    { name = "docagents", extras = ["anthropic", "baseten", "bedrock", "cohere", "deepseek", "fireworks", "githubcopilot", "google-genai", "groq", "huggingface", "ibm", "litellm", "mistralai", "nvidia", "ollama", "openai", "openrouter", "perplexity", "vertexai", "xai"], marker = "extra == 'all-providers'" },
     { name = "httpx", specifier = ">=0.27.0,<1.0.0" },
     { name = "httpx", specifier = ">=0.28.1,<1.0.0" },
     { name = "langchain", specifier = ">=1.2.10,<2.0.0" },
@@ -1169,8 +1204,10 @@ requires-dist = [
     { name = "langchain-aws", marker = "extra == 'bedrock'", specifier = ">=1.0.0,<2.0.0" },
     { name = "langchain-baseten", marker = "extra == 'baseten'", specifier = ">=0.1.9,<1.0.0" },
     { name = "langchain-cohere", marker = "extra == 'cohere'", specifier = ">=0.5.0,<1.0.0" },
+    { name = "langchain-daytona", marker = "extra == 'daytona'", editable = "../partners/daytona" },
     { name = "langchain-deepseek", marker = "extra == 'deepseek'", specifier = ">=1.0.0,<2.0.0" },
     { name = "langchain-fireworks", marker = "extra == 'fireworks'", specifier = ">=1.0.0,<2.0.0" },
+    { name = "langchain-githubcopilot-chat", marker = "extra == 'githubcopilot'", specifier = ">=0.3.0,<0.4.0" },
     { name = "langchain-google-genai", specifier = ">=4.2.1,<5.0.0" },
     { name = "langchain-google-genai", marker = "extra == 'google-genai'", specifier = ">=4.2.1,<5.0.0" },
     { name = "langchain-google-vertexai", marker = "extra == 'vertexai'", specifier = ">=3.0.0,<4.0.0" },
@@ -1180,12 +1217,14 @@ requires-dist = [
     { name = "langchain-litellm", marker = "extra == 'litellm'", specifier = ">=0.6.1,<2.0.0" },
     { name = "langchain-mcp-adapters", specifier = ">=0.2.0,<1.0.0" },
     { name = "langchain-mistralai", marker = "extra == 'mistralai'", specifier = ">=1.0.0,<2.0.0" },
+    { name = "langchain-modal", marker = "extra == 'modal'", editable = "../partners/modal" },
     { name = "langchain-nvidia-ai-endpoints", marker = "extra == 'nvidia'", specifier = ">=1.0.0,<2.0.0" },
     { name = "langchain-ollama", marker = "extra == 'ollama'", specifier = ">=1.0.0,<2.0.0" },
     { name = "langchain-openai", specifier = ">=1.1.8,<2.0.0" },
     { name = "langchain-openai", marker = "extra == 'openai'", specifier = ">=1.1.8,<2.0.0" },
     { name = "langchain-openrouter", marker = "extra == 'openrouter'", specifier = ">=0.1.0,<2.0.0" },
     { name = "langchain-perplexity", marker = "extra == 'perplexity'", specifier = ">=1.0.0,<2.0.0" },
+    { name = "langchain-runloop", marker = "extra == 'runloop'", editable = "../partners/runloop" },
     { name = "langchain-xai", marker = "extra == 'xai'", specifier = ">=1.0.0,<2.0.0" },
     { name = "langgraph", specifier = ">=1.1.2,<2.0.0" },
     { name = "langgraph-checkpoint-sqlite", specifier = ">=3.0.0,<4.0.0" },
@@ -1193,7 +1232,6 @@ requires-dist = [
     { name = "langgraph-sdk", specifier = ">=0.3.11,<1.0.0" },
     { name = "langsmith", extras = ["sandbox"], specifier = ">=0.7.7" },
     { name = "markdownify", specifier = ">=0.13.0,<2.0.0" },
-    { name = "modal", specifier = ">=0.65.0,<2.0.0" },
     { name = "pillow", specifier = ">=10.0.0,<13.0.0" },
     { name = "prompt-toolkit", specifier = ">=3.0.52,<4.0.0" },
     { name = "pyperclip", specifier = ">=1.11.0,<2.0.0" },
@@ -1201,7 +1239,6 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0.0" },
     { name = "requests", specifier = ">=2.0.0,<3.0.0" },
     { name = "rich", specifier = ">=14.0.0,<15.0.0" },
-    { name = "runloop-api-client", specifier = ">=0.69.0" },
     { name = "tavily-python", specifier = ">=0.7.21,<1.0.0" },
     { name = "textual", specifier = ">=8.0.0,<9.0.0" },
     { name = "textual-autocomplete", specifier = ">=3.0.0,<5.0.0" },
@@ -2571,6 +2608,34 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain-daytona"
+version = "0.0.4"
+source = { editable = "../partners/daytona" }
+dependencies = [
+    { name = "daytona" },
+    { name = "deepagents" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "daytona" },
+    { name = "deepagents", editable = "../deepagents" },
+]
+
+[package.metadata.requires-dev]
+test = [
+    { name = "langchain-tests", specifier = ">=1.1.4" },
+    { name = "pytest", specifier = ">=7.3.0,<10.0.0" },
+    { name = "pytest-asyncio", specifier = ">=1.3.0" },
+    { name = "pytest-cov" },
+    { name = "pytest-socket" },
+    { name = "pytest-timeout", specifier = ">=2.3.1,<3.0.0" },
+    { name = "pytest-xdist" },
+    { name = "ruff", specifier = ">=0.13.1,<0.16.0" },
+    { name = "ty", specifier = ">=0.0.1,<1.0.0" },
+]
+
+[[package]]
 name = "langchain-deepseek"
 version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2597,6 +2662,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5a/6d/544b1175f535e7d831db963f8107c7940944e76609d5a0ae3751b0afb8f7/langchain_fireworks-1.1.0.tar.gz", hash = "sha256:04db3b2fd390f113e2026375d9a60fdc46e456920d4c98b3d7a6f70ce16bf7ed", size = 169062 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0d/4a/7e60c509f8a2224c7c77e5d0ad4a7c15ea64cdb31f6bd709299a65dc1316/langchain_fireworks-1.1.0-py3-none-any.whl", hash = "sha256:fa063d4413a2eb46bf7ec6d7473f6ac16c8015f61bbbc7aa4912ebf82d0236fe", size = 18331 },
+]
+
+[[package]]
+name = "langchain-githubcopilot-chat"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "langchain-core" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/33/9b/31fea102ea803576fb5b138ab084c6ddf58cbb68659de7fb59a952175277/langchain_githubcopilot_chat-0.3.0.tar.gz", hash = "sha256:e9b897badc840de1cea9bdd270b60d122568393f895cb394001d8a4ffe2718a6", size = 15459 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7e/28/c91cd912b055089a216161d33df370efedb41e32cf087f75aaca717bb871/langchain_githubcopilot_chat-0.3.0-py3-none-any.whl", hash = "sha256:269e9c569773f042e56a77f2cb2a1b51fbf9acb4ed96a9a895fdcf7fddba6332", size = 18424 },
 ]
 
 [[package]]
@@ -2721,6 +2799,34 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain-modal"
+version = "0.0.2"
+source = { editable = "../partners/modal" }
+dependencies = [
+    { name = "deepagents" },
+    { name = "modal" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "deepagents", editable = "../deepagents" },
+    { name = "modal" },
+]
+
+[package.metadata.requires-dev]
+test = [
+    { name = "langchain-tests", specifier = ">=1.1.4" },
+    { name = "pytest", specifier = ">=7.3.0,<9.0.0" },
+    { name = "pytest-asyncio", specifier = ">=1.3.0" },
+    { name = "pytest-cov" },
+    { name = "pytest-socket" },
+    { name = "pytest-timeout", specifier = ">=2.3.1,<3.0.0" },
+    { name = "pytest-xdist" },
+    { name = "ruff", specifier = ">=0.13.1,<0.16.0" },
+    { name = "ty", specifier = ">=0.0.1,<1.0.0" },
+]
+
+[[package]]
 name = "langchain-nvidia-ai-endpoints"
 version = "1.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2788,6 +2894,34 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain-runloop"
+version = "0.0.3"
+source = { editable = "../partners/runloop" }
+dependencies = [
+    { name = "deepagents" },
+    { name = "runloop-api-client" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "deepagents", editable = "../deepagents" },
+    { name = "runloop-api-client" },
+]
+
+[package.metadata.requires-dev]
+test = [
+    { name = "langchain-tests", specifier = ">=1.1.4" },
+    { name = "pytest", specifier = ">=7.3.0,<9.0.0" },
+    { name = "pytest-asyncio", specifier = ">=1.3.0" },
+    { name = "pytest-cov" },
+    { name = "pytest-socket" },
+    { name = "pytest-timeout", specifier = ">=2.3.1,<3.0.0" },
+    { name = "pytest-xdist" },
+    { name = "ruff", specifier = ">=0.13.1,<0.16.0" },
+    { name = "ty", specifier = ">=0.0.1,<1.0.0" },
+]
+
+[[package]]
 name = "langchain-text-splitters"
 version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2833,7 +2967,7 @@ wheels = [
 
 [[package]]
 name = "langgraph-api"
-version = "0.7.76"
+version = "0.7.70"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cloudpickle" },
@@ -2864,9 +2998,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "watchfiles" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fc/bc/88a3ea941e0a3ea668b5763faa9fe6e589595af76b4f7ad1e483f1ed0d62/langgraph_api-0.7.76.tar.gz", hash = "sha256:75ce026ae0eb57f414faf5b7d2906001ebb6cf9b4e45989876c0a96ead346494", size = 633581 }
+sdist = { url = "https://files.pythonhosted.org/packages/1c/c9/af7bf0318470fcd1e7cc8325a427d90baac42d97bb978c425db60b424aa0/langgraph_api-0.7.70.tar.gz", hash = "sha256:a6523eae73bedc2c05591b9ace12447d92925df8a7a252fced793555672ebe15", size = 631963 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/c3/ae87a9f1ac2bd1ecfd2e13801437cc431b31beefa7d2bad2dbf869754f6e/langgraph_api-0.7.76-py3-none-any.whl", hash = "sha256:24ba171e8487888f0117bf75b6f79ce6ba67010413a5c6bb9afabe89b4b26340", size = 531385 },
+    { url = "https://files.pythonhosted.org/packages/4d/41/4685bc493ece665e6bb26bec14d3c811584200b670854f491dc9fb246cb8/langgraph_api-0.7.70-py3-none-any.whl", hash = "sha256:4f7a4f8e49066fbbdf7ddbc9ab58375a1eb95ebbf19f6e54db38f9522790d391", size = 529694 },
 ]
 
 [[package]]
@@ -2898,7 +3032,7 @@ wheels = [
 
 [[package]]
 name = "langgraph-cli"
-version = "0.4.18"
+version = "0.4.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -2906,9 +3040,9 @@ dependencies = [
     { name = "langgraph-sdk" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ae/d9/43f4c5083a9be70edf2add6d46c20bf8f6b69fca55d9e61a42ccd846886d/langgraph_cli-0.4.18.tar.gz", hash = "sha256:843f5990c18e425924b7fe34a164a13fb902d29ac92ceda9d21aa4b56057a91e", size = 876731 }
+sdist = { url = "https://files.pythonhosted.org/packages/16/0c/eecfcc44bd45860dda9cf879e459e8e61cfe48abdc066e9aaa14dcf734fc/langgraph_cli-0.4.15.tar.gz", hash = "sha256:4705f53d060e31b2fb8d70bb3663a14ff89e4cb14bf3a05222547a95356645d7", size = 866837 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/22/04/0e7be7b6a4bcfe5f939495e7f0de2f8d911d481bf75848feb3aff3ac7c83/langgraph_cli-0.4.18-py3-none-any.whl", hash = "sha256:2327eb2b8859d5fd2c44bfc4f73def78b78c0d0bc4593de3b8cf37353d001f9d", size = 55593 },
+    { url = "https://files.pythonhosted.org/packages/a7/ad/ba915c904b5fdbf5db9d9307c5658a01ba3fa808165961f783de1fd1007b/langgraph_cli-0.4.15-py3-none-any.whl", hash = "sha256:6525c67bdcf07d80bae2ae5d32e4db7842b8e5983988eaadd635107c181536ee", size = 49353 },
 ]
 
 [package.optional-dependencies]
@@ -3005,7 +3139,7 @@ wheels = [
 
 [[package]]
 name = "litellm"
-version = "1.82.3"
+version = "1.82.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -3021,9 +3155,9 @@ dependencies = [
     { name = "tiktoken" },
     { name = "tokenizers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/53/00/13993312e6d2fb29cd6d5ffceb293455ef747fe5675eaa9aa49b09184656/litellm-1.82.3.tar.gz", hash = "sha256:7215b95e7cc38a52b5ae778d67e8829dec86594c8b05d8431294e95c7d59937c", size = 17368754 }
+sdist = { url = "https://files.pythonhosted.org/packages/34/bd/6251e9a965ae2d7bc3342ae6c1a2d25dd265d354c502e63225451b135016/litellm-1.82.1.tar.gz", hash = "sha256:bc8427cdccc99e191e08e36fcd631c93b27328d1af789839eb3ac01a7d281890", size = 17197496 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/3a/590d58dee65a238f7f3d5c37f8f9f9021ecaf27fe379a393b4259324b56e/litellm-1.82.3-py3-none-any.whl", hash = "sha256:609901f6c5a5cf8c24386e4e3f50738bb8a9db719709fd76b208c8ee6d00f7a7", size = 15551034 },
+    { url = "https://files.pythonhosted.org/packages/57/77/0c6eca2cb049793ddf8ce9cdcd5123a35666c4962514788c4fc90edf1d3b/litellm-1.82.1-py3-none-any.whl", hash = "sha256:a9ec3fe42eccb1611883caaf8b1bf33c9f4e12163f94c7d1004095b14c379eb2", size = 15341896 },
 ]
 
 [[package]]
@@ -3353,11 +3487,11 @@ wheels = [
 
 [[package]]
 name = "multipart"
-version = "1.3.0"
+version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/6d/c9/c6f5ab81bae667d4fe42a58df29f4c2db6ad8377cfd0e9baa729e4fa3ebb/multipart-1.3.0.tar.gz", hash = "sha256:a46bd6b0eb4c1ba865beb88ddd886012a3da709b6e7b86084fc37e99087e5cf1", size = 38816 }
+sdist = { url = "https://files.pythonhosted.org/packages/8e/d6/9c4f366d6f9bb8f8fb5eae3acac471335c39510c42b537fd515213d7d8c3/multipart-1.3.1.tar.gz", hash = "sha256:211d7cfc1a7a43e75c4d24ee0e8e0f4f61d522f1a21575303ae85333dea687bf", size = 38929 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9a/d6/d547a7004b81fa0b2aafa143b09196f6635e4105cd9d2c641fa8a4051c05/multipart-1.3.0-py3-none-any.whl", hash = "sha256:439bf4b00fd7cb2dbff08ae13f49f4f49798931ecd8d496372c63537fa19f304", size = 14938 },
+    { url = "https://files.pythonhosted.org/packages/19/ed/e1f03200ee1f0bf4a2b9b72709afefbf5319b68df654e0b84b35c65613ee/multipart-1.3.1-py3-none-any.whl", hash = "sha256:a82b59e1befe74d3d30b3d3f70efd5a2eba4d938f845dcff9faace968888ff29", size = 15061 },
 ]
 
 [[package]]
@@ -4244,11 +4378,11 @@ wheels = [
 
 [[package]]
 name = "pyasn1"
-version = "0.6.2"
+version = "0.6.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fe/b6/6e630dff89739fcd427e3f72b3d905ce0acb85a45d4ec3e2678718a3487f/pyasn1-0.6.2.tar.gz", hash = "sha256:9b59a2b25ba7e4f8197db7686c09fb33e658b98339fadb826e9512629017833b", size = 146586 }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/5f/6583902b6f79b399c9c40674ac384fd9cd77805f9e6205075f828ef11fb2/pyasn1-0.6.3.tar.gz", hash = "sha256:697a8ecd6d98891189184ca1fa05d1bb00e2f84b5977c481452050549c8a72cf", size = 148685 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/44/b5/a96872e5184f354da9c84ae119971a0a4c221fe9b27a4d94bd43f2596727/pyasn1-0.6.2-py3-none-any.whl", hash = "sha256:1eb26d860996a18e9b6ed05e7aae0e9fc21619fcee6af91cca9bad4fbea224bf", size = 83371 },
+    { url = "https://files.pythonhosted.org/packages/5d/a0/7d793dce3fa811fe047d6ae2431c672364b462850c6235ae306c0efd025f/pyasn1-0.6.3-py3-none-any.whl", hash = "sha256:a80184d120f0864a52a073acc6fc642847d0be408e7c7252f31390c0f4eadcde", size = 83997 },
 ]
 
 [[package]]
