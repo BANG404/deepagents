@@ -1168,7 +1168,7 @@ requires-dist = [
     { name = "langchain-daytona", marker = "extra == 'daytona'", editable = "../partners/daytona" },
     { name = "langchain-deepseek", marker = "extra == 'deepseek'", specifier = ">=1.0.0,<2.0.0" },
     { name = "langchain-fireworks", marker = "extra == 'fireworks'", specifier = ">=1.0.0,<2.0.0" },
-    { name = "langchain-githubcopilot-chat", marker = "extra == 'githubcopilot'", specifier = ">=0.2.0,<0.3.0" },
+    { name = "langchain-githubcopilot-chat", marker = "extra == 'githubcopilot'", specifier = ">=0.3.0,<0.4.0" },
     { name = "langchain-google-genai", specifier = ">=4.2.1,<5.0.0" },
     { name = "langchain-google-genai", marker = "extra == 'google-genai'", specifier = ">=4.2.1,<5.0.0" },
     { name = "langchain-google-vertexai", marker = "extra == 'vertexai'", specifier = ">=3.0.0,<4.0.0" },
@@ -2648,15 +2648,15 @@ wheels = [
 
 [[package]]
 name = "langchain-githubcopilot-chat"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "langchain-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/57/70/145e55a6eab49034981d161c9b848bcbd14f6b7d294a75cd179779ea32ec/langchain_githubcopilot_chat-0.2.0.tar.gz", hash = "sha256:a3e2cd408b7b71e4e9038442a49f7f558629c0574497cf8a71d1952fc7dfb78e", size = 13298 }
+sdist = { url = "https://files.pythonhosted.org/packages/33/9b/31fea102ea803576fb5b138ab084c6ddf58cbb68659de7fb59a952175277/langchain_githubcopilot_chat-0.3.0.tar.gz", hash = "sha256:e9b897badc840de1cea9bdd270b60d122568393f895cb394001d8a4ffe2718a6", size = 15459 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9d/d6/6099a6a98a0fc77564fe3684e6d4acad7b115264bf8c42add44a7be7fd3d/langchain_githubcopilot_chat-0.2.0-py3-none-any.whl", hash = "sha256:c96820f47fd5215399d061baf1e56199a7007be58c78ebb09da4e41e63c021e4", size = 16180 },
+    { url = "https://files.pythonhosted.org/packages/7e/28/c91cd912b055089a216161d33df370efedb41e32cf087f75aaca717bb871/langchain_githubcopilot_chat-0.3.0-py3-none-any.whl", hash = "sha256:269e9c569773f042e56a77f2cb2a1b51fbf9acb4ed96a9a895fdcf7fddba6332", size = 18424 },
 ]
 
 [[package]]
