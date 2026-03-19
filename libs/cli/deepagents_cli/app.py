@@ -2947,22 +2947,23 @@ class DeepAgentsApp(App):
 
     @work(thread=True)
     def _login_copilot_worker(self) -> None:
-        """Run GitHub Device Flow and save the long-lived OAuth access token.
+        """Authenticate with GitHub Copilot and persist the Copilot token.
 
-        The previous approach called `get_copilot_token()` which exchanges the
-        OAuth access token for a short-lived internal Copilot token (~30 min TTL).
-        That internal token causes 401s on `api.githubcopilot.com/chat/completions`
-        once it expires.  We now do the Device Flow ourselves and persist the raw
-        OAuth access token (`ghu_...`), which is long-lived and accepted by
-        `ChatGithubCopilot` directly.
+        Uses `get_copilot_token()` from `langchain-githubcopilot-chat` which
+        performs the GitHub Device Flow and then exchanges the OAuth access
+        token for an internal Copilot token via
+        `api.github.com/copilot_internal/v2/token`.  This internal token is
+        the correct credential for `api.githubcopilot.com/chat/completions`
+        (the same endpoint VS Code Copilot uses).
+
+        Note: the token has a ~30-minute TTL.  If inference fails with 401
+        after that window, run `/login` again to refresh it.
         """
         import os
-        import time
 
         try:
-            import httpx
+            import langchain_githubcopilot_chat.auth as copilot_auth
             from langchain_githubcopilot_chat import ChatGithubCopilot
-            from langchain_githubcopilot_chat.auth import CLIENT_ID
         except ImportError:
             self.call_from_thread(
                 self._mount_message,
@@ -2975,110 +2976,49 @@ class DeepAgentsApp(App):
 
         mounted_messages: list[AppMessage] = []
 
-        def _show(text: str) -> None:
+        def _on_copilot_auth_message(text: str) -> None:
+            if not text.strip() or text.startswith("==="):
+                return
             msg_widget = AppMessage(text)
             mounted_messages.append(msg_widget)
             self.call_from_thread(self._mount_message, msg_widget)
 
         try:
-            # Step 1: request device + user code
-            _show("Requesting device code from GitHub...")
-            with httpx.Client() as client:
-                res = client.post(
-                    "https://github.com/login/device/code",
-                    headers={"Accept": "application/json"},
-                    data={"client_id": CLIENT_ID, "scope": "read:user"},
-                )
-                res.raise_for_status()
-                data = res.json()
+            token = copilot_auth.get_copilot_token(callback=_on_copilot_auth_message)
+            if token:
+                os.environ["GITHUB_TOKEN"] = token
 
-            device_code: str = data.get("device_code", "")
-            user_code: str = data.get("user_code", "")
-            verification_uri: str = data.get(
-                "verification_uri", "https://github.com/login/device"
-            )
-            interval: int = int(data.get("interval", 5))
+                try:
+                    from pathlib import Path
 
-            _show(f"Open in your browser: {verification_uri}")
-            _show(f"Enter the code: {user_code}")
-            _show("Waiting for authorization…")
+                    import dotenv
 
-            # Step 2: poll for the OAuth access token.
-            # We stop here instead of exchanging for the internal Copilot token
-            # because the internal token expires in ~30 min and causes 401s when
-            # ChatGithubCopilot uses it later.  The raw OAuth token is long-lived.
-            access_token: str | None = None
-            with httpx.Client() as client:
-                while True:
-                    token_res = client.post(
-                        "https://github.com/login/oauth/access_token",
-                        headers={"Accept": "application/json"},
-                        data={
-                            "client_id": CLIENT_ID,
-                            "device_code": device_code,
-                            "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
-                        },
-                    ).json()
+                    from deepagents_cli.config import _find_dotenv_from_start_path
 
-                    if "access_token" in token_res:
-                        access_token = token_res["access_token"]
-                        break
-                    error = token_res.get("error", "")
-                    if error == "authorization_pending":
-                        time.sleep(interval)
-                    elif error == "slow_down":
-                        interval += 5
-                        time.sleep(interval)
-                    else:
-                        desc = token_res.get(
-                            "error_description", error or str(token_res)
-                        )
-                        self.call_from_thread(
-                            self._mount_message,
-                            ErrorMessage(f"Authorization failed: {desc}"),
-                        )
-                        return
+                    env_path = _find_dotenv_from_start_path(Path.cwd()) or Path(".env")
+                    if not env_path.exists():
+                        env_path.touch()
+                    dotenv.set_key(str(env_path), "GITHUB_TOKEN", token)
+                    self.call_from_thread(
+                        self._mount_message,
+                        AppMessage(
+                            "Saved GITHUB_TOKEN to .env file. "
+                            "Note: this token expires in ~30 min — run /login again if you see 401 errors."
+                        ),
+                    )
+                except Exception as env_e:  # noqa: BLE001
+                    self.call_from_thread(
+                        self._mount_message,
+                        ErrorMessage(f"Could not save GITHUB_TOKEN to .env: {env_e}"),
+                    )
 
-            if not access_token:
-                self.call_from_thread(
-                    self._mount_message,
-                    ErrorMessage("Authorization failed: no access token received."),
-                )
-                return
+                def _remove_messages() -> None:
+                    for msg in mounted_messages:
+                        msg.remove()
 
-            # Step 3: persist the OAuth access token
-            os.environ["GITHUB_TOKEN"] = access_token
+                self.call_from_thread(_remove_messages)
 
-            try:
-                from pathlib import Path
-
-                import dotenv
-
-                from deepagents_cli.config import _find_dotenv_from_start_path
-
-                env_path = _find_dotenv_from_start_path(Path.cwd()) or Path(".env")
-                if not env_path.exists():
-                    env_path.touch()
-                dotenv.set_key(str(env_path), "GITHUB_TOKEN", access_token)
-                self.call_from_thread(
-                    self._mount_message,
-                    AppMessage("Saved GITHUB_TOKEN to .env file."),
-                )
-            except Exception as env_e:  # noqa: BLE001
-                self.call_from_thread(
-                    self._mount_message,
-                    ErrorMessage(f"Could not save GITHUB_TOKEN to .env: {env_e}"),
-                )
-
-            # Clean up interim auth-flow messages
-            def _remove_messages() -> None:
-                for msg in mounted_messages:
-                    msg.remove()
-
-            self.call_from_thread(_remove_messages)
-
-            self._fetch_and_save_copilot_models(ChatGithubCopilot, access_token)
-
+                self._fetch_and_save_copilot_models(ChatGithubCopilot, token)
         except Exception as e:  # noqa: BLE001
             msg = f"Login failed: {e}"
             self.call_from_thread(self._mount_message, ErrorMessage(msg))
