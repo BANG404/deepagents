@@ -2984,19 +2984,29 @@ class DeepAgentsApp(App):
             self.call_from_thread(self._mount_message, msg_widget)
 
         try:
-            result = copilot_auth.get_copilot_token(
-                callback=_on_copilot_auth_message, return_both=True
-            )
-            access_token, copilot_token = result if result else (None, None)
-            if access_token:
-                os.environ["GITHUB_TOKEN"] = access_token
+            import inspect
 
-                # Cache both tokens so ChatGithubCopilot can auto-refresh
-                if copilot_token:
+            _sig = inspect.signature(copilot_auth.get_copilot_token)
+            if "return_both" in _sig.parameters:
+                # langchain-githubcopilot-chat >= 0.5.0
+                result = copilot_auth.get_copilot_token(
+                    callback=_on_copilot_auth_message, return_both=True
+                )
+                access_token, copilot_token = result if result else (None, None)
+                if access_token and copilot_token:
                     try:
                         copilot_auth.save_tokens_to_cache(access_token, copilot_token)
                     except Exception:  # noqa: BLE001
                         pass
+            else:
+                # langchain-githubcopilot-chat < 0.5.0: returns copilot token directly
+                copilot_token = copilot_auth.get_copilot_token(
+                    callback=_on_copilot_auth_message
+                )
+                access_token = copilot_token
+
+            if access_token:
+                os.environ["GITHUB_TOKEN"] = access_token
 
                 try:
                     from pathlib import Path
