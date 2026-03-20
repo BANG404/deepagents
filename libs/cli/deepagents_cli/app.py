@@ -2967,9 +2967,19 @@ class DeepAgentsApp(App):
             self.call_from_thread(self._mount_message, msg_widget)
 
         try:
-            token = copilot_auth.get_copilot_token(callback=_on_copilot_auth_message)
-            if token:
-                os.environ["GITHUB_TOKEN"] = token
+            result = copilot_auth.get_copilot_token(
+                callback=_on_copilot_auth_message, return_both=True
+            )
+            access_token, copilot_token = result if result else (None, None)
+            if access_token:
+                os.environ["GITHUB_TOKEN"] = access_token
+
+                # Cache both tokens so ChatGithubCopilot can auto-refresh
+                if copilot_token:
+                    try:
+                        copilot_auth.save_tokens_to_cache(access_token, copilot_token)
+                    except Exception:  # noqa: BLE001
+                        pass
 
                 try:
                     from pathlib import Path
@@ -2981,7 +2991,7 @@ class DeepAgentsApp(App):
                     env_path = _find_dotenv_from_start_path(Path.cwd()) or Path(".env")
                     if not env_path.exists():
                         env_path.touch()
-                    dotenv.set_key(str(env_path), "GITHUB_TOKEN", token)
+                    dotenv.set_key(str(env_path), "GITHUB_TOKEN", access_token)
                     self.call_from_thread(
                         self._mount_message,
                         AppMessage("Saved GITHUB_TOKEN to .env file."),
@@ -2998,7 +3008,9 @@ class DeepAgentsApp(App):
 
                 self.call_from_thread(remove_messages)
 
-                self._fetch_and_save_copilot_models(ChatGithubCopilot, token)
+                self._fetch_and_save_copilot_models(
+                    ChatGithubCopilot, copilot_token or access_token
+                )
         except Exception as e:  # noqa: BLE001
             msg = f"Login failed: {e}"
             self.call_from_thread(self._mount_message, ErrorMessage(msg))
