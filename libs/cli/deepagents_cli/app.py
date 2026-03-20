@@ -2988,35 +2988,12 @@ class DeepAgentsApp(App):
                 callback=_on_copilot_auth_message, return_both=True
             )
             access_token, copilot_token = result if result else (None, None)
-            if access_token and copilot_token:
-                copilot_auth.save_tokens_to_cache(access_token, copilot_token)
+            # Note: get_copilot_token already calls save_tokens_to_cache internally
+            # with the correct expires_at. Do NOT call it again here — that would
+            # overwrite expires_at with None, breaking auto-refresh in ChatGithubCopilot.
 
             if access_token:
                 os.environ["GITHUB_TOKEN"] = access_token
-
-                try:
-                    from pathlib import Path
-
-                    import dotenv
-
-                    from deepagents_cli.config import _find_dotenv_from_start_path
-
-                    env_path = _find_dotenv_from_start_path(Path.cwd()) or Path(".env")
-                    if not env_path.exists():
-                        env_path.touch()
-                    dotenv.set_key(str(env_path), "GITHUB_TOKEN", access_token)
-                    self.call_from_thread(
-                        self._mount_message,
-                        AppMessage(
-                            "Saved GITHUB_TOKEN to .env file. "
-                            "Note: this token expires in ~30 min — run /login again if you see 401 errors."
-                        ),
-                    )
-                except Exception as env_e:  # noqa: BLE001
-                    self.call_from_thread(
-                        self._mount_message,
-                        ErrorMessage(f"Could not save GITHUB_TOKEN to .env: {env_e}"),
-                    )
 
                 def _remove_messages() -> None:
                     for msg in mounted_messages:
@@ -3024,9 +3001,7 @@ class DeepAgentsApp(App):
 
                 self.call_from_thread(_remove_messages)
 
-                self._fetch_and_save_copilot_models(
-                    ChatGithubCopilot, copilot_token or access_token
-                )
+                self._fetch_and_save_copilot_models(ChatGithubCopilot, access_token)
         except Exception as e:  # noqa: BLE001
             msg = f"Login failed: {e}"
             self.call_from_thread(self._mount_message, ErrorMessage(msg))
