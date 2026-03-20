@@ -845,6 +845,11 @@ class DeepAgentsApp(App):
             exclusive=True,
             group="startup-model-prewarm",
         )
+        self.run_worker(
+            self._prewarm_copilot_models,
+            exclusive=True,
+            group="startup-copilot-prewarm",
+        )
 
     async def _start_server_background(self) -> None:
         """Background worker: start server + MCP preload concurrently."""
@@ -1004,6 +1009,36 @@ class DeepAgentsApp(App):
             )
         except Exception:
             logger.debug("Could not prewarm model caches", exc_info=True)
+
+    async def _prewarm_copilot_models(self) -> None:
+        """Refresh cached Copilot model list at startup if credentials exist.
+
+        Runs silently in the background — no UI messages are shown.  If the
+        user has never logged in (no cached token) the worker exits immediately
+        without touching the config.
+        """
+        try:
+            import importlib.util
+
+            if importlib.util.find_spec("langchain_githubcopilot_chat") is None:
+                return
+
+            from langchain_githubcopilot_chat.auth import load_tokens_from_cache
+            from langchain_githubcopilot_chat.chat_models import ChatGithubCopilot
+
+            cached = await asyncio.to_thread(load_tokens_from_cache)
+            token = cached.get("github_token") or os.environ.get("GITHUB_TOKEN")
+            if not token:
+                return
+
+            await asyncio.to_thread(
+                self._fetch_and_save_copilot_models,
+                ChatGithubCopilot,
+                token,
+                True,  # silent=True — no success banner at startup
+            )
+        except Exception:
+            logger.debug("Background Copilot model refresh failed", exc_info=True)
 
     async def _check_for_updates(self) -> None:
         """Check PyPI for a newer docagents version and notify the user."""
@@ -3006,7 +3041,9 @@ class DeepAgentsApp(App):
             msg = f"Login failed: {e}"
             self.call_from_thread(self._mount_message, ErrorMessage(msg))
 
-    def _fetch_and_save_copilot_models(self, chat_cls: type, token: str) -> None:
+    def _fetch_and_save_copilot_models(
+        self, chat_cls: type, token: str, silent: bool = False
+    ) -> None:
         """Fetch available Copilot models from the API and persist them to config.
 
         Calls `ChatGithubCopilot.get_available_models()`, filters to chat
@@ -3018,6 +3055,8 @@ class DeepAgentsApp(App):
             chat_cls: The `ChatGithubCopilot` class (passed in to avoid a
                 second import inside a nested scope).
             token: The GitHub Copilot token used to authenticate the API call.
+            silent: When ``True`` (startup auto-refresh), suppress the success
+                banner.  Errors are always suppressed in silent mode.
         """
         from deepagents_cli.model_config import clear_caches, save_provider_models
 
@@ -3027,13 +3066,14 @@ class DeepAgentsApp(App):
         try:
             raw_models = chat_cls.get_available_models(github_token=token)
         except Exception as e:  # noqa: BLE001
-            self.call_from_thread(
-                self._mount_message,
-                AppMessage(
-                    "Logged in to GitHub Copilot, but could not fetch model list: "
-                    f"{e}\nYou can still use models via /model githubcopilot:<model-id>"
-                ),
-            )
+            if not silent:
+                self.call_from_thread(
+                    self._mount_message,
+                    AppMessage(
+                        "Logged in to GitHub Copilot, but could not fetch model list: "
+                        f"{e}\nYou can still use models via /model githubcopilot:<model-id>"
+                    ),
+                )
             return
 
         # Keep only chat models; the API also returns embedding models etc.
@@ -3056,18 +3096,19 @@ class DeepAgentsApp(App):
         # Clear all caches so get_available_models() and /model reflect the change.
         clear_caches()
 
-        count = len(model_ids)
-        preview_limit = 3
-        preview = ", ".join(model_ids[:preview_limit])
-        suffix = f", … (+{count - preview_limit} more)" if count > preview_limit else ""
-        self.call_from_thread(
-            self._mount_message,
-            AppMessage(
-                f"Successfully logged in to GitHub Copilot! "
-                f"{count} model(s) available: {preview}{suffix}\n"
-                f"Use /model to switch, e.g. /model githubcopilot:<model-id>"
-            ),
-        )
+        if not silent:
+            count = len(model_ids)
+            preview_limit = 3
+            preview = ", ".join(model_ids[:preview_limit])
+            suffix = f", … (+{count - preview_limit} more)" if count > preview_limit else ""
+            self.call_from_thread(
+                self._mount_message,
+                AppMessage(
+                    f"Successfully logged in to GitHub Copilot! "
+                    f"{count} model(s) available: {preview}{suffix}\n"
+                    f"Use /model to switch, e.g. /model githubcopilot:<model-id>"
+                ),
+            )
 
     async def _clear_messages(self) -> None:
         """Clear the messages area and message store."""

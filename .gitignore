@@ -223,4 +223,6 @@ libs/cli/TEXTUAL_PROGRESS.md
 */tmp/.DS_Store
 
 CLAUDE.md
+
 libs/cli/*.png
+research_project

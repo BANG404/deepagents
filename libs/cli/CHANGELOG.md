@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.7] (2026-03-20)
+
+### Features
+
+* Prewarm GitHub Copilot model list at startup using cached credentials
+
+### Bug Fixes
+
+* Upgrade `langchain-githubcopilot-chat` to `>=0.6.0` (remote PyPI package); includes streaming retry-on-error and 401 token-refresh for streams
+
 ## [0.0.34](https://github.com/langchain-ai/deepagents/compare/deepagents-cli==0.0.33...deepagents-cli==0.0.34) (2026-03-17)
 
 ### Features

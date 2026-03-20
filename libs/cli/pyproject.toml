@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "docagents"
-version = "0.1.6"
+version = "0.1.7"
 description = "Terminal interface for Deep Agents - interactive AI agent with file operations, shell access, and sub-agent capabilities."
 readme = "README.md"
 license = { text = "MIT" }
@@ -82,7 +82,7 @@ bedrock = ["langchain-aws>=1.0.0,<2.0.0"]
 cohere = ["langchain-cohere>=0.5.0,<1.0.0"]
 deepseek = ["langchain-deepseek>=1.0.0,<2.0.0"]
 fireworks = ["langchain-fireworks>=1.0.0,<2.0.0"]
-githubcopilot = ["langchain-githubcopilot-chat>=0.5.0,<0.6.0"]
+githubcopilot = ["langchain-githubcopilot-chat>=0.6.0,<0.7.0"]
 google-genai = ["langchain-google-genai>=4.2.1,<5.0.0"]
 groq = ["langchain-groq>=1.0.0,<2.0.0"]
 huggingface = ["langchain-huggingface>=1.0.0,<2.0.0"]
